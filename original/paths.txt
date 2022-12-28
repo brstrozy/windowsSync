@@ -1,0 +1,3 @@
+D:\tempdir
+D:\dirtest
+D:\testdir
