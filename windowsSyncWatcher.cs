@@ -7,13 +7,12 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 
-namespace windowsSyncBackup{
-    class SyncBackup{
+namespace windowsSyncWatcher{
+    class SyncWatcher{
 
         static Dictionary<string, string> paths = new Dictionary<string, string>();
 
         static List<FileSystemWatcher> watchers = new List<FileSystemWatcher>();
-        static string rsync_command = "rsync -rlptoDxvh --delete --backup --backup-dir=/cygdrive/z/trash";
 
         static void Main(string[] args){
 
@@ -51,32 +50,45 @@ namespace windowsSyncBackup{
         }
 
         private static void OnChange(object sender, FileSystemEventArgs e){
-            RunRsync(sender);
+            string command = "wsl bash /home/brstrozy/windowTest.bash";
+            string output;
+
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = "powershell.exe";
+                process.StartInfo.Arguments = command;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
+
+                output = process.StandardOutput.ReadToEnd();
+
+                process.WaitForExit();
+            }
+
+            Console.WriteLine(output);
         }
 
         private static void OnRename(object sender, RenamedEventArgs e){
-            RunRsync(sender);
-        }
+            string command = "wsl bash /home/brstrozy/windowTest.bash";
+            string output;
 
-        private static void RunRsync(object sender){
-            var watch_path = (FileSystemWatcher)sender;
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = "powershell.exe";
+                process.StartInfo.Arguments = command;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+                process.Start();
 
-            string src = paths[watch_path.Path];
-            string dest = "/cygdrive/z/storage/desktop";
-            string full_rsync_command = rsync_command + " " + src + " " + dest;
-            // Console.WriteLine(full_rsync_command);
+                output = process.StandardOutput.ReadToEnd();
 
-            // rsync_command + \"/cygdrive/d/tempdir\" \"/cygdrive/z/storage/desktop/temp\""
-            var info = new ProcessStartInfo ( "cmd.exe" , "/K" +  full_rsync_command)
-           {
-                RedirectStandardOutput = true ,
-                UseShellExecute = false ,
-                CreateNoWindow = true
-           } ;
+                process.WaitForExit();
+            }
 
-            System.Diagnostics.Process proc = new System.Diagnostics.Process () ;
-                           proc.StartInfo = info ;
-                           proc.Start () ;
+            Console.WriteLine(output);
         }
         
     }
