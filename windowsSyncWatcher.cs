@@ -18,7 +18,7 @@ namespace windowsSyncWatcher{
 
             string[] lines = System.IO.File.ReadAllLines("paths.txt");
             foreach (string path in lines){
-                string rsync_drive_format = "/cygdrive/" + char.ToLower(path[0]);
+                string rsync_drive_format = "/mnt/" + char.ToLower(path[0]);
                 string replacedSlashes = path.Replace('\\','/');
                 string replaced_drive_letter = rsync_drive_format + replacedSlashes.Substring(1);
                 string formatted_path = replaced_drive_letter.Replace(":", string.Empty);
@@ -50,28 +50,15 @@ namespace windowsSyncWatcher{
         }
 
         private static void OnChange(object sender, FileSystemEventArgs e){
-            string command = "wsl bash /home/brstrozy/windowTest.bash";
-            string output;
-
-            using (Process process = new Process())
-            {
-                process.StartInfo.FileName = "powershell.exe";
-                process.StartInfo.Arguments = command;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-                process.Start();
-
-                output = process.StandardOutput.ReadToEnd();
-
-                process.WaitForExit();
-            }
-
-            Console.WriteLine(output);
+            callRsync();
         }
 
         private static void OnRename(object sender, RenamedEventArgs e){
-            string command = "wsl bash /home/brstrozy/windowTest.bash";
+            callRsync();
+        }
+
+        private static void callRsync(){
+            string command = "wsl bash /home/brstrozy/windowsSync/windowsSync.bash";
             string output;
 
             using (Process process = new Process())
