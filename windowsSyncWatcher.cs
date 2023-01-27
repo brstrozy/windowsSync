@@ -16,11 +16,12 @@ namespace windowsSyncWatcher{
 
         static void Main(string[] args){
 
+            // CREATE DICTIONARY --- WINDOWS_PATH --> WSL PATH
             string[] lines = System.IO.File.ReadAllLines("paths.txt");
             foreach (string path in lines){
-                string rsync_drive_format = "/mnt/" + char.ToLower(path[0]);
+                string wsl_drive_format = "/mnt/" + char.ToLower(path[0]);
                 string replacedSlashes = path.Replace('\\','/');
-                string replaced_drive_letter = rsync_drive_format + replacedSlashes.Substring(1);
+                string replaced_drive_letter = wsl_drive_format + replacedSlashes.Substring(1);
                 string formatted_path = replaced_drive_letter.Replace(":", string.Empty);
 
                 paths.Add(path, formatted_path);
